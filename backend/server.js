@@ -129,8 +129,10 @@ app.post("/api/fulfill-sla", async (req, res) => {
     const receipt = await fulfillSLAOnChain(slaId);
     res.json({ success: true, txHash: receipt.hash });
   } catch (err) {
-    console.error("Fulfill error:", err.message);
-    res.status(500).json({ success: false, error: err.message });
+    let msg = err.message;
+    if (msg.includes("Already fulfilled")) msg = "This SLA has already been fulfilled on-chain.";
+    console.error("Fulfill error:", msg);
+    res.status(500).json({ success: false, error: msg });
   }
 });
 
